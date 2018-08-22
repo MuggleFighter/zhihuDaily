@@ -2,23 +2,17 @@
 
 > zhihuDaily
 
-## Build Setup
+## 使用方法
 
 ``` bash
-## install dependencies
+## 安装依赖
 npm install
 
-## serve with hot reload at localhost:8080
+## 运行开发服务器
 npm run dev
 
-## run proxy
+## 运行代理服务器（必须）
 node src/assets/proxy.js
 
-## build for production with minification
-npm run build
-
-## build for production and view the bundle analyzer report
-npm run build --report
+##浏览器打开 localhost:8080
 ```
-
-##
