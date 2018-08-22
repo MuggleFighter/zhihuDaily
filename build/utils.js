@@ -99,3 +99,47 @@ exports.createNotifierCallback = () => {
     })
   }
 }
+
+let glob = require('glob')
+let HtmlWebpackPlugin = require('html-webpack-plugin')
+let PAGE_PATH = path.resolve(__dirname, '../src/pages')
+let merge = require('webpack-merge')
+
+//多入口配置
+exports.entries = function() {
+  let entryFiles = glob.sync(PAGE_PATH + '/*/*.js')
+  let map = {}
+  entryFiles.forEach((filePath) => {
+    let filename = filePath.substring(filePath.lastIndexOf('\/') + 1, filePath.lastIndexOf('.'))
+    map[filename] = filePath
+  })
+  return map
+}
+
+//多页面输出配置
+exports.htmlPlugin = function() {
+  let entryHtml = glob.sync(PAGE_PATH + '/*/*.html')
+  let arr = []
+  entryHtml.forEach((filePath) => {
+    let filename = filePath.substring(filePath.lastIndexOf('\/') + 1, filePath.lastIndexOf('.'))
+    let conf = {
+      template: filePath,
+      filename: filename + '.html',
+      chunks: [filename],
+      inject: true
+    }
+    if (process.env.NODE_ENV === 'production') {
+      conf = merge(conf, {
+        chunks: ['manifest', 'vendor', filename],
+        minify: {
+          removeComments: true,
+          collapseWhitespace: true,
+          removeAttributeQuotes: true
+        },
+        chunksSortMode: 'dependency'
+      })
+    }
+    arr.push(new HtmlWebpackPlugin(conf))
+  })
+  return arr
+}
